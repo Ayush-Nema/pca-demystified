@@ -1,105 +1,124 @@
+# Assumptions of PCA
+Principal Component Analysis (PCA) is fundamentally a linear technique. It is used for linear dimensionality reduction and linear analysis of data. Here’s a brief explanation of why PCA is considered linear:
 
+1. **Linear Combinations**:
+   - PCA identifies the directions (principal components) along which the variance of the data is maximized. These directions are linear combinations of the original features.
+   - Mathematically, if $\mathbf{w}_i$ is a principal component (eigenvector), then the projection of the data onto this component is given by the linear combination $\mathbf{z}_i = X \mathbf{w}_i$.
 
-```mehrmaid
-graph TD
-    A[Data Matrix X] --> B[Mean Centering]
-    B[Mean Centering] --> C["Centered Data <br> $$\bar{X} = X - \frac{1}{n} \mathbf{1} \mathbf{1}^T X$$"]
-    C --> D[Covariance Matrix S]
-    D["Covariance Matrix <br> $$S = \frac{1}{n} \bar{X}^T \bar{X}$$"] --> E[Eigenvalue Decomposition]
-    E["Eigenvalue Decomposition <br> $$S \mathbf{w}_i = \lambda_i \mathbf{w}_i$$"] --> F[Principal Components]
-    F["Select top $k$ eigenvectors $$W = [\mathbf{w}_1, \mathbf{w}_2, \ldots, \mathbf{w}_k]$$"] --> G[Projection onto Principal Components]
-    G["Projected Data $$Z = \bar{X} W$$"]
-```
+2. **Covariance Matrix**:
+   - PCA involves the computation of the covariance matrix of the data, which captures the linear relationships between features. The eigenvectors of this matrix are used to determine the principal components.
+   - The covariance matrix $S$ is computed as $S = \frac{1}{n} \bar{X}^T \bar{X}$, where $\bar{X}$ is the mean-centered data.
 
-```ad-important
-Mermaid *does not* natively support mathematical equations. However, it can be arranged. For Mathematical equations to show up in the Mermaid plot, do install ==`mehrmaid`== extension along with ==`mermaid`==.
+3. **Eigenvalue Decomposition**:
+   - The eigenvalue decomposition of the covariance matrix $S \mathbf{w}_i = \lambda_i \mathbf{w}_i$ is a linear operation, identifying the directions of maximum variance in the linear feature space.
 
-Ref: [Forum discussion link](https://forum.obsidian.md/t/mermaid-diagrams-why-isnt-simple-math-rendering/85605)
-```
-
-
-This diagram sequentially illustrates the key steps in PCA:
-1. **Data Matrix $X$**: Start with the original data matrix $X$ of dimensions $n \times p$. 
-2. **Mean Centering**: Subtract the mean of each feature to center the data.
-3. **Centered Data $\bar{X}$**: Resulting centered data matrix.
-4. **Covariance Matrix $S$**: Compute the covariance matrix $S$ of the centered data.
-5. **Eigenvalue Decomposition**: Perform eigenvalue decomposition on the covariance matrix $S$ to find the eigenvalues $\lambda_i$​ and eigenvectors $\mathbf{w}_i$.
-6. **Principal Components**: Select the top $k$ eigenvectors corresponding to the largest eigenvalues to form the projection matrix $W$.
-7. **Projection onto Principal Components**: Project the centered data $\bar{X}$ onto the principal components to obtain the transformed data $Z$.
-
-
-## Steps in detail
-
-1. **Data Matrix**:
-   Given a data matrix $X \in \mathbb{R}^{n \times p}$, where $n$ is the number of samples and $p$ is the number of features.
-
-2. **Mean Centering**:
-   Center the data by subtracting the mean of each feature:       
-   $$\bar{X} = X - \frac{1}{n} \mathbf{1} \mathbf{1}^T X$$   
-   where $\mathbf{1} \in \mathbb{R}^n$ is a vector of ones.
-
-3. **Covariance Matrix**:
-   Compute the covariance matrix $S \in \mathbb{R}^{p \times p}$ of the centered data:
-   $$
-   S = \frac{1}{n} \bar{X}^T \bar{X}
-   $$
-
-4. **Eigenvalue Decomposition**:
-   Perform eigenvalue decomposition of the covariance matrix $S$:
-   $$S \mathbf{w}_i = \lambda_i \mathbf{w}_i \quad \text{for} \quad i = 1, 2, \ldots, p$$
-   
-   where $\mathbf{w}_i \in \mathbb{R}^p$ are the eigenvectors and $\lambda_i \in \mathbb{R}$ are the corresponding eigenvalues.
-
-5. **Principal Components**:
-   The principal components are the eigenvectors $\mathbf{w}_i$ corresponding to the largest eigenvalues $\lambda_i$. Arrange the eigenvalues in descending order:
-   $$
-   \lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_p
-   $$
-   Select the top $k$ eigenvectors $\mathbf{w}_1, \mathbf{w}_2, \ldots, \mathbf{w}_k$ to form the projection matrix $W$:
-   $$
-   W = [\mathbf{w}_1 \; \mathbf{w}_2 \; \ldots \; \mathbf{w}_k]
-   $$
-
-6. **Projection onto Principal Components**:
-   Project the centered data $\bar{X}$ onto the principal components:
-   $$
-   Z = \bar{X} W
-   $$
-   where $Z \in \mathbb{R}^{n \times k}$ is the transformed data in the new $k$-dimensional space.
-
-These mathematical equations outline the steps involved in PCA, from centering the data and computing the covariance matrix to performing eigenvalue decomposition and projecting the data onto the principal components.
-
+## Limitations and Extensions
+- **Nonlinear Relationships**: PCA cannot capture complex, nonlinear relationships in the data. It assumes that the principal components are linear combinations of the original features.
+- **Kernel PCA**: To handle nonlinear relationships, Kernel PCA can be used. Kernel PCA extends PCA by first mapping the data into a higher-dimensional feature space using a nonlinear kernel function, and then performing linear PCA in that space.
+- **Other Nonlinear Techniques**: For nonlinear dimensionality reduction, other techniques like t-SNE (t-Distributed Stochastic Neighbor Embedding), UMAP (Uniform Manifold Approximation and Projection), and autoencoders can be used.
 
 ---
 
-## Mean centering
+# Assumptions in details
+Principal Component Analysis (PCA) is a popular technique for dimensionality reduction and data analysis, but it relies on several key assumptions and conditions. Understanding these assumptions is crucial for applying PCA effectively. Here’s a detailed explanation of the main assumptions of PCA:
 
-$$\bar{X} = X - \mathbf{1} \mu^T$$
+## 1. **Linearity**
+**◎ Assumption:**
+- PCA assumes that the principal components (directions of maximum variance) are linear combinations of the original features in the data matrix $X$.
 
-Where:
-- $\bar{X}$ is the centered data matrix.
-- $X$ is the original data matrix of size $n \times p$.
-- $\mathbf{1}$ is a column vector of ones of length $n$.
-- $\mu$ is the mean vector of each feature (of length $p$).
-- $\mu^T$ is the transpose of the mean vector, making it a row vector.
+**◎ Explanation:**
+- PCA identifies linear combinations of the original features that capture the most variance in the data. It does not account for nonlinear relationships between features.
+- If the data has a complex, nonlinear structure, PCA may not adequately capture the underlying patterns.
 
-In detailed steps:
-1. Compute the mean vector $\mu$:
-   $$\mu = \frac{1}{n} \sum_{i=1}^{n} X_i$$
-   
-   where $X_i$ is the $i$-th row of the matrix $X$.
+**◎ Mathematical Formulation**: 
+$$X_{proj}=XW$$where $W$ is a matrix of principal components (eigenvectors) and $X_{proj}$​ is the projected data in the reduced space.
 
-2. Center the data by subtracting the mean vector from each row of $X$:
-   $$\bar{X} = X - \mathbf{1} \mu^T$$
+## 2. **Variance Maximization**
+**◎ Assumption:**
+- PCA assumes that the most important information in the data is the direction of maximum variance.
+- Or, in other words, it assumes that the directions of maximum variance in the data correspond to the principal components. It seeks to maximize the variance captured by each principal component.
 
-   where $\mathbf{1} \mu^T$ replicates the mean vector $\mu$ across all $n$ rows of $X$.
+**◎ Explanation:**
+- The principal components are the directions along which the data varies the most. This means that PCA aims to find the axes of maximum spread in the data.
+- The principal components are ordered by the amount of variance they explain, with the first component explaining the most variance.
 
-In summary, the correct mean centering formula is:
-$$\bar{X} = X - \mathbf{1} \mu^T$$
+**◎ Mathematical Formulation**:
+ $$
+ \text{Var}(\mathbf{X} \mathbf{w}_i) = \mathbf{w}_i^T S \mathbf{w}_i
+$$
+ where $S$ is the covariance matrix of the data $\mathbf{X}$, and $\mathbf{w}_i$ is the $i$-th principal component.
 
-where $\mu^T$ ensures that the mean vector is subtracted from each row of the data matrix.
+## 3. **Gaussian Distribution (Optional but Beneficial)**
+**◎ Assumption:**
+- While not strictly necessary, PCA performs better when the data is approximately normally distributed.
+
+**◎ Explanation:**
+- PCA is often more interpretable and effective when the data follows a Gaussian distribution because the variance-covariance structure in Gaussian data is well-defined and interpretable.
+- However, PCA can still be applied to non-Gaussian data; it just may not capture all meaningful patterns as effectively.
+
+## 4. **Scale Sensitivity**
+**◎ Assumption:**
+- PCA assumes that the features are on a similar scale.
+
+**◎ Explanation:**
+- PCA is sensitive to the scale of the features because it is based on the covariance matrix, which is influenced by the scale of the data.
+- Features with larger scales can dominate the principal components, leading to skewed results. Therefore, it’s important to standardize or normalize features before applying PCA.
+
+## 5. **Mean Centering**
+**◎ Assumption:**
+- PCA assumes that the data has been mean-centered. This is necessary for correctly computing the covariance matrix and finding principal components.
+
+**◎ Explanation:**
+- PCA requires the data to be mean-centered (subtracting the mean of each feature) so that the covariance matrix is calculated relative to the mean of the data.
+- If the data is not centered, the principal components may not properly reflect the directions of maximum variance.
+
+**◎ Mathematical Formulation**:
+$$ \bar{X} = X - \frac{1}{n} \mathbf{1} \mathbf{1}^T X$$
+
+where $\bar{X}$ is the mean-centered data matrix, $\mathbf{1}$ is a vector of ones, and $n$ is the number of samples.
+
+## 6. **Orthogonality of Principal Components**
+**◎ Assumption:**
+- PCA assumes that the principal components are orthogonal (uncorrelated).
+
+**◎ Explanation:**
+- The principal components are derived from the eigenvectors of the covariance matrix, and these eigenvectors are orthogonal by definition.
+- Orthogonality ensures that each principal component captures a unique aspect of the data variance without redundancy.
+- This orthogonality ensures that each principal component captures unique variance.
+
+**◎ Mathematical Formulation**:
+ $$\mathbf{w}_i^T \mathbf{w}_j = 0 \quad \text{for} \quad i \ne j$$
+ where $\mathbf{w}_i$ and $\mathbf{w}_j$ are different principal components.
 
 
+#### Summary of the assumptions
+- **Linearity**: PCA assumes linear relationships among features.
+- **Variance Maximization**: PCA focuses on directions of maximum variance.
+- **Gaussian Distribution**: PCA works best with normally distributed data, but is not strictly required.
+- **Scale Sensitivity**: Features should be on similar scales; otherwise, scaling issues can affect results.
+- **Mean Centering**: Data should be mean-centered before applying PCA.
+- **Orthogonality**: Principal components are orthogonal, ensuring that they capture independent variance.
 
-#### Miscellaneous
-![Principal Component Analysis second principal](https://builtin.com/sites/www.builtin.com/files/inline-images/national/Principal%2520Component%2520Analysis%2520second%2520principal.gif)
+---
+## Consequences of Violating Assumptions
+1. **Nonlinearity**:
+   - **Issue**: If the data contains significant nonlinear relationships, PCA may not capture the underlying structure effectively. PCA will still find directions of maximum variance, but these directions may not correspond to meaningful patterns in the data.
+   - **Impact**: Reduced effectiveness in capturing the true structure of the data and potential loss of important information.
+
+2. **Variance Assumption**:
+   - **Issue**: If the data does not exhibit variance that aligns with the directions PCA identifies, the principal components may not represent the most significant features.
+   - **Impact**: The reduced data may not provide a meaningful representation of the original data, leading to poor performance in subsequent analyses.
+
+3. **Mean Centering**:
+   - **Issue**: If the data is not mean-centered, the covariance matrix will not be computed correctly. This affects the principal components obtained.
+   - **Impact**: The principal components may be biased or incorrect, leading to inaccurate dimensionality reduction and representation.
+
+4. **Orthogonality**:
+   - **Issue**: If the principal components are not orthogonal, it indicates multicollinearity or redundant components.
+   - **Impact**: The dimensionality reduction might not be as effective, and the components may not capture unique aspects of the variance, leading to potential overfitting or inefficient representation.
+
+### Handling Violations
+- **Nonlinearity**: Use nonlinear dimensionality reduction techniques such as Kernel PCA, t-SNE, or UMAP.
+- **Variance Issues**: Consider other methods like Independent Component Analysis (ICA) if variance alone does not capture the structure.
+- **Mean Centering**: Ensure proper preprocessing to center the data before applying PCA.
+- **Orthogonality**: Regularization techniques or methods like Factor Analysis can help in dealing with correlated components.
