@@ -11,10 +11,12 @@ The objective function for Principal Component Analysis (PCA) can be expressed u
 2. **Subsequent Principal Components**:
    For each subsequent principal component $\mathbf{w}_i$ (where $i = 2, 3, \ldots, k$), we need to ensure orthogonality to the previously found components and maximize the variance:
    $$\mathbf{w}_i = \arg\max_{\mathbf{w} \in \mathbb{R}^p, \|\mathbf{w}\| = 1, \mathbf{w} \perp \mathbf{w}_j \, \forall \, j < i} \mathbf{w}^T S \mathbf{w}$$
+   
 </br>
 
-3. **Minimizing Reconstruction Error**:
+4. **Minimizing Reconstruction Error**:
    Alternatively, PCA can be viewed as finding a low-dimensional subspace that minimizes the reconstruction error. The reconstruction error for projecting $X$ onto the subspace spanned by $\{ \mathbf{w}_1, \mathbf{w}_2, \ldots, \mathbf{w}_k \}$ is:
+   
    $$\min_{W \in \mathbb{R}^{p \times k}} \| X - X W W^T \|_F^2$$
 
    where $W = [\mathbf{w}_1 \; \mathbf{w}_2 \; \ldots \; \mathbf{w}_k]$ is a matrix whose columns are the principal components, and $\| \cdot \|_F$ denotes the Frobenius norm.
